@@ -1,176 +1,53 @@
 <!doctype html>
 <html lang="th">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#111827">
-<link rel="manifest" href="manifest.webmanifest">
-<title>ระบบจดคิวร้านสมชายหมูปิ้ง</title>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#ef2d2d"><link rel="manifest" href="manifest.webmanifest">
+<title>สมชายหมูปิ้ง • ระบบคิวออนไลน์</title>
 <style>
-:root{--bg:#f5f7fb;--card:#fff;--ink:#111827;--muted:#64748b;--line:#e5e7eb;--primary:#111827;--green:#15803d;--orange:#ea580c;--red:#dc2626;--blue:#2563eb}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Tahoma,sans-serif}
-button,input,select,textarea{font:inherit}button{cursor:pointer}
-header{position:sticky;top:0;z-index:10;background:#111827;color:white;padding:14px 18px;display:flex;justify-content:space-between;align-items:center;gap:12px}
-.brand{font-weight:800;font-size:20px}.sub{font-size:12px;color:#cbd5e1}.wrap{max-width:1250px;margin:auto;padding:18px}
-.grid{display:grid;grid-template-columns:390px 1fr;gap:18px}.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px;box-shadow:0 4px 16px #00000008}
-h2,h3{margin:0 0 14px}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:18px}.stat{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px}.stat b{font-size:26px;display:block}.muted{color:var(--muted);font-size:13px}
-label{display:block;font-weight:700;font-size:13px;margin:12px 0 6px}input,select,textarea{width:100%;border:1px solid #cbd5e1;border-radius:10px;padding:11px;background:#fff}textarea{min-height:70px;resize:vertical}
-.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}.btn{border:0;border-radius:10px;padding:11px 14px;font-weight:800}.primary{background:var(--primary);color:#fff}.green{background:#dcfce7;color:#166534}.blue{background:#dbeafe;color:#1d4ed8}.orange{background:#ffedd5;color:#9a3412}.red{background:#fee2e2;color:#991b1b}.ghost{background:#f1f5f9;color:#334155}
-.menuitem{display:grid;grid-template-columns:1fr 90px 80px;gap:8px;align-items:center;margin:8px 0}.qty{display:flex;gap:6px;align-items:center}.qty button{width:34px;height:34px;border:0;border-radius:8px;background:#e2e8f0;font-weight:900}.qty span{min-width:24px;text-align:center;font-weight:800}
-.order{border:1px solid var(--line);border-radius:14px;padding:14px;margin:10px 0;background:#fff}.ordertop{display:flex;justify-content:space-between;gap:10px;align-items:center}.qno{font-size:23px;font-weight:900}.chips{display:flex;gap:6px;flex-wrap:wrap}.chip{font-size:12px;border-radius:999px;padding:5px 9px;background:#f1f5f9}.actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}.items{font-size:13px;color:#475569;margin-top:7px}
-.tabs{display:flex;gap:8px;overflow:auto;margin-bottom:14px}.tab{white-space:nowrap}.hidden{display:none!important}
-.auth{min-height:100vh;display:grid;place-items:center;padding:20px}.auth .card{width:min(420px,100%)}.danger{color:#b91c1c}
-.toast{position:fixed;right:16px;bottom:16px;background:#111827;color:#fff;padding:12px 15px;border-radius:10px;display:none;z-index:99}
-@media(max-width:900px){.grid{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,1fr)}}@media(max-width:520px){.wrap{padding:10px}.row{grid-template-columns:1fr}.stats{gap:7px}.stat{padding:10px}.stat b{font-size:22px}}
+:root{--red:#ef2d2d;--red2:#ff5757;--green:#18b76a;--blue:#3182f6;--orange:#ff8a22;--ink:#172033;--muted:#718096;--bg:#f6f7fb;--card:#fff;--line:#e8ebf0;--shadow:0 10px 30px rgba(23,32,51,.07);--r:18px}
+*{box-sizing:border-box}html,body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,system-ui,-apple-system,"Segoe UI",Tahoma,sans-serif}button,input,select,textarea{font:inherit}button{cursor:pointer;border:0}.hidden{display:none!important}
+.auth{min-height:100vh;display:grid;place-items:center;padding:22px;background:linear-gradient(135deg,#fff 0,#fff5f5 55%,#ffe9e9 100%)}.authCard{width:min(430px,100%);background:#fff;border:1px solid #eee;border-radius:28px;box-shadow:0 20px 60px #c91e1e14;padding:30px}.logo{display:flex;align-items:center;gap:12px}.logoMark{width:52px;height:52px;border-radius:16px;background:var(--red);display:grid;place-items:center;color:#fff;font-size:28px;box-shadow:0 8px 18px #ef2d2d38}.logo h1{font-size:24px;margin:0}.logo p{margin:2px 0;color:var(--muted);font-size:13px}.authCard label{display:block;font-size:13px;font-weight:800;margin:18px 0 7px}.authCard input{width:100%;padding:13px 14px;border:1px solid #dfe4ec;border-radius:12px;outline:0}.authCard input:focus{border-color:var(--red);box-shadow:0 0 0 4px #ef2d2d12}.btn{padding:11px 15px;border-radius:11px;font-weight:800;transition:.18s}.btn:hover{transform:translateY(-1px)}.primary{background:var(--red);color:#fff}.soft{background:#f1f3f7;color:#364152}.green{background:#dcf8e9;color:#087b45}.orange{background:#fff0df;color:#a44b00}.blue{background:#e4efff;color:#1f65c1}.danger{background:#ffe4e4;color:#b91c1c}.full{width:100%}
+.app{min-height:100vh}.topbar{height:72px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 24px;position:sticky;top:0;z-index:30}.topBrand{display:flex;align-items:center;gap:10px}.topBrand .mini{width:40px;height:40px;border-radius:12px;background:var(--red);display:grid;place-items:center;color:#fff;font-size:20px}.topBrand strong{font-size:18px}.topBrand small{display:block;color:var(--muted);font-size:11px}.statusOnline{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:#087b45;background:#e8f9f0;padding:6px 10px;border-radius:999px}.dot{width:8px;height:8px;background:#16b866;border-radius:50%}
+.layout{display:grid;grid-template-columns:230px 1fr;min-height:calc(100vh - 72px)}.side{background:#111827;color:#fff;padding:18px 12px;position:sticky;top:72px;height:calc(100vh - 72px)}.shop{padding:12px 10px 18px;border-bottom:1px solid #ffffff18;margin-bottom:14px}.shop strong{display:block;font-size:18px}.shop small{color:#aab4c5}.nav{display:grid;gap:7px}.nav button{background:transparent;color:#d9e0ea;text-align:left;padding:12px 13px;border-radius:11px;font-weight:700}.nav button.active,.nav button:hover{background:var(--red);color:#fff}.sideFoot{position:absolute;bottom:18px;left:12px;right:12px}.sideFoot button{width:100%;background:#ffffff10;color:#fff}.main{padding:22px;max-width:1500px;width:100%;margin:auto}.pageHead{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:18px}.pageHead h2{margin:0;font-size:25px}.pageHead p{margin:4px 0;color:var(--muted);font-size:13px}.headActions{display:flex;gap:8px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:13px;margin-bottom:18px}.stat{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:17px;box-shadow:var(--shadow);display:flex;justify-content:space-between;align-items:center}.statIcon{width:43px;height:43px;border-radius:13px;display:grid;place-items:center;font-size:21px}.stat small{display:block;color:var(--muted);font-weight:700}.stat b{display:block;font-size:26px;margin-top:3px}.siRed{background:#ffe5e5}.siGreen{background:#e1f8ed}.siBlue{background:#e4efff}.siOrange{background:#fff0df}
+.grid2{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(300px,.75fr);gap:18px}.card{background:#fff;border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);padding:18px}.cardTitle{display:flex;justify-content:space-between;align-items:center;margin-bottom:13px}.cardTitle h3{margin:0;font-size:18px}.filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}.filters input{flex:1;min-width:180px}.input,.select,.textarea{border:1px solid #dfe4ec;border-radius:11px;padding:10px 12px;background:#fff;outline:0}.input:focus,.select:focus,.textarea:focus{border-color:var(--red);box-shadow:0 0 0 4px #ef2d2d10}.queueTable{width:100%;border-collapse:separate;border-spacing:0 7px}.queueTable th{text-align:left;color:#8792a2;font-size:11px;padding:0 10px}.queueTable td{background:#fafbfc;padding:12px 10px;border-top:1px solid #eef0f4;border-bottom:1px solid #eef0f4}.queueTable td:first-child{border-left:1px solid #eef0f4;border-radius:12px 0 0 12px}.queueTable td:last-child{border-right:1px solid #eef0f4;border-radius:0 12px 12px 0}.qnum{font-weight:900;font-size:19px}.items{font-size:12px;color:#64748b;margin-top:3px}.badge{display:inline-flex;padding:6px 9px;border-radius:999px;font-size:11px;font-weight:800;white-space:nowrap}.wait{background:#ffe6e6;color:#c52222}.making{background:#fff0df;color:#a44b00}.done{background:#e1f8ed;color:#087b45}.paid{background:#e4efff;color:#1f65c1}.unpaid{background:#fff1f1;color:#b42323}.callPanel{min-height:100%;display:flex;flex-direction:column}.callBox{background:linear-gradient(160deg,#fff4f4,#fff);border:1px solid #ffd7d7;border-radius:17px;padding:18px;text-align:center}.callBox .meg{font-size:26px}.callBox .label{color:var(--red);font-weight:900}.bigQ{font-size:76px;line-height:1;font-weight:1000;margin:7px 0}.callItems{background:#f6f7f9;border-radius:13px;padding:12px;font-size:13px}.nextQ{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:9px}.nextQ div{background:#f0f3f8;border-radius:9px;padding:10px;text-align:center;font-weight:900}.section{display:none}.section.active{display:block}
+.formGrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.field label{display:block;font-size:12px;font-weight:800;margin:0 0 6px}.field.fullRow{grid-column:1/-1}.menuRow{display:grid;grid-template-columns:1fr 82px 92px;gap:8px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}.qty{display:flex;align-items:center;gap:6px}.qty button{width:32px;height:32px;border-radius:9px;background:#edf0f4;font-weight:900}.qty span{min-width:20px;text-align:center;font-weight:900}.totalLine{display:flex;justify-content:space-between;align-items:center;border-top:1px dashed #dfe4ec;padding-top:14px;margin-top:12px}.totalLine b{font-size:27px}.reportCards{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.reportItem{background:#f8f9fb;border-radius:14px;padding:14px;display:flex;justify-content:space-between}.mobileNav{display:none}
+@media(max-width:1000px){.layout{grid-template-columns:1fr}.side{display:none}.grid2{grid-template-columns:1fr}.mobileNav{position:fixed;display:grid;grid-template-columns:repeat(4,1fr);bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--line);z-index:50;padding:7px 5px env(safe-area-inset-bottom)}.mobileNav button{background:transparent;color:#768195;font-size:10px;font-weight:800}.mobileNav button.active{color:var(--red)}.main{padding:14px 12px 82px}.topbar{padding:0 13px;height:64px}.stats{grid-template-columns:repeat(2,1fr)}.topBrand strong{font-size:16px}}
+@media(max-width:650px){.pageHead{align-items:flex-start}.headActions .statusOnline{display:none}.stats{gap:8px}.stat{padding:12px}.stat b{font-size:22px}.statIcon{width:38px;height:38px}.queueTable th:nth-child(2),.queueTable td:nth-child(2){display:none}.queueTable th:nth-child(3),.queueTable td:nth-child(3){display:none}.queueTable td{padding:10px 8px}.formGrid{grid-template-columns:1fr}.field.fullRow{grid-column:auto}.reportCards{grid-template-columns:1fr}.bigQ{font-size:64px}}
 </style>
 </head>
 <body>
-<div id="authView" class="auth">
-  <div class="card">
-    <h2>🍢 สมชายหมูปิ้ง</h2>
-    <p class="muted">เข้าสู่ระบบเพื่อใช้งานระบบคิวออนไลน์</p>
-    <label>อีเมล</label><input id="email" type="email" autocomplete="email" placeholder="you@example.com">
-    <label>รหัสผ่าน</label><input id="password" type="password" autocomplete="current-password" placeholder="อย่างน้อย 6 ตัวอักษร">
-    <div class="actions"><button class="btn primary" id="loginBtn">เข้าสู่ระบบ</button><button class="btn ghost" id="signupBtn">สร้างบัญชี</button></div>
-    <p class="muted">บัญชีแรกใช้สำหรับเจ้าของร้าน/ผู้ดูแลระบบ</p>
-  </div>
-</div>
-
-<div id="appView" class="hidden">
-<header><div><div class="brand">🍢 ระบบจดคิวร้านสมชายหมูปิ้ง</div><div class="sub">Online • Supabase Realtime</div></div><button class="btn ghost" id="logoutBtn">ออกจากระบบ</button></header>
-<div class="wrap">
-  <div class="stats">
-    <div class="stat"><span class="muted">คิวรอ</span><b id="statWaiting">0</b></div>
-    <div class="stat"><span class="muted">กำลังทำ</span><b id="statMaking">0</b></div>
-    <div class="stat"><span class="muted">เสร็จแล้ววันนี้</span><b id="statDone">0</b></div>
-    <div class="stat"><span class="muted">ยอดขายวันนี้</span><b id="statSales">฿0</b></div>
-  </div>
-  <div class="tabs">
-    <button class="btn primary tab" data-tab="queue">➕ จดคิว</button>
-    <button class="btn ghost tab" data-tab="orders">📋 คิวทั้งหมด</button>
-    <button class="btn ghost tab" data-tab="history">📊 ประวัติ/ยอดขาย</button>
-    <button class="btn ghost tab" data-tab="menus">⚙️ เมนูและราคา</button>
-  </div>
-
-  <section id="tab-queue" class="grid">
-    <div class="card"><h2>เพิ่มคิวใหม่</h2>
-      <div class="row"><div><label>ชื่อลูกค้า</label><input id="customer" placeholder="เช่น คุณสมชาย"></div><div><label>ประเภท</label><select id="orderType"><option>หน้าร้าน</option><option>โทรสั่ง</option></select></div></div>
-      <label>รายการ</label><div id="menuBuilder"></div>
-      <label>การชำระเงิน</label><select id="payment"><option>ยังไม่จ่าย</option><option>จ่ายแล้ว</option></select>
-      <label>หมายเหตุ</label><textarea id="note" placeholder="เช่น ไม่ใส่เผ็ด / มารับ 18:00"></textarea>
-      <div style="display:flex;justify-content:space-between;align-items:center;margin:14px 0"><span class="muted">ยอดรวม</span><strong style="font-size:25px" id="total">฿0</strong></div>
-      <button class="btn primary" style="width:100%" id="addOrder">เพิ่มเข้าคิว</button>
-    </div>
-    <div class="card"><h2>คิวที่กำลังรอ</h2><div id="waitingList"></div></div>
-  </section>
-
-  <section id="tab-orders" class="card hidden"><div style="display:flex;justify-content:space-between;gap:10px;align-items:center"><h2>คิววันนี้</h2><input id="search" style="max-width:260px" placeholder="ค้นหาคิว/ชื่อลูกค้า"></div><div id="ordersList"></div></section>
-
-  <section id="tab-history" class="card hidden"><h2>สรุปวันนี้</h2><div id="report"></div></section>
-
-  <section id="tab-menus" class="card hidden"><h2>จัดการเมนู</h2><p class="muted">แก้ราคาและเปิด/ปิดเมนูได้</p><div id="menuAdmin"></div><div class="row"><input id="newMenuName" placeholder="ชื่อเมนูใหม่"><input id="newMenuPrice" type="number" min="0" step="0.01" placeholder="ราคา"></div><button class="btn primary" style="margin-top:10px" id="addMenu">เพิ่มเมนู</button></section>
-</div>
-</div>
-<div id="toast" class="toast"></div>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script>
-const SUPABASE_URL="https://bwlpuaaywyzmpidmclsb.supabase.co";
-const SUPABASE_PUBLISHABLE_KEY="sb_publishable_LdH8QTbu6TPKnaLRnroW5A_yHgwvfIw";
-const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);
-let menus=[], orders=[], user=null, selected={};
-
-const $=id=>document.getElementById(id);
-function money(n){return "฿"+Number(n||0).toLocaleString("th-TH",{minimumFractionDigits:0,maximumFractionDigits:2})}
-function toast(s){const t=$("toast");t.textContent=s;t.style.display="block";setTimeout(()=>t.style.display="none",2200)}
-function todayStart(){const d=new Date();d.setHours(0,0,0,0);return d.toISOString()}
-function esc(s){return String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]))}
-function statusChip(s){return `<span class="chip">${esc(s)}</span>`}
-
-async function loadAll(){
-  const [m,o]=await Promise.all([
-    db.from("menus").select("*").order("created_at"),
-    db.from("orders").select("*").gte("created_at",todayStart()).order("queue_no",{ascending:false})
-  ]);
-  if(m.error){toast("โหลดเมนูไม่สำเร็จ: "+m.error.message);return}
-  if(o.error){toast("โหลดคิวไม่สำเร็จ: "+o.error.message);return}
-  menus=m.data||[];orders=o.data||[];render();
-}
-function render(){
-  renderMenuBuilder();renderOrders();renderWaiting();renderAdmin();renderReport();stats();
-}
-function renderMenuBuilder(){
-  $("menuBuilder").innerHTML=menus.filter(x=>x.active).map(m=>{
-    const q=selected[m.id]||0;
-    return `<div class="menuitem"><div><b>${esc(m.name)}</b><div class="muted">${money(m.price)}</div></div>
-      <div class="qty"><button onclick="changeQty('${m.id}',-1)">−</button><span>${q}</span><button onclick="changeQty('${m.id}',1)">+</button></div>
-      <strong>${money(q*m.price)}</strong></div>`;
-  }).join("")||'<p class="muted">ยังไม่มีเมนูที่เปิดใช้งาน</p>';
-  const total=menus.reduce((s,m)=>s+(selected[m.id]||0)*Number(m.price),0);$("total").textContent=money(total);
-}
-window.changeQty=(id,d)=>{selected[id]=Math.max(0,(selected[id]||0)+d);renderMenuBuilder()}
-function itemPayload(){return menus.filter(m=>(selected[m.id]||0)>0).map(m=>({menu_id:m.id,name:m.name,price:Number(m.price),qty:selected[m.id],subtotal:Number(m.price)*selected[m.id]}))}
-async function addOrder(){
-  const items=itemPayload(); if(!items.length){toast("เลือกเมนูก่อนครับ");return}
-  const {data:last}=await db.from("orders").select("queue_no").gte("created_at",todayStart()).order("queue_no",{ascending:false}).limit(1);
-  const queueNo=(last&&last[0]?.queue_no||0)+1;
-  const total=items.reduce((s,x)=>s+x.subtotal,0);
-  const {error}=await db.from("orders").insert({queue_no:queueNo,customer_name:$("customer").value.trim()||null,note:$("note").value.trim()||null,order_type:$("orderType").value,payment_status:$("payment").value,status:"รอคิว",total_amount:total,items,created_by:user.id});
-  if(error){toast("เพิ่มคิวไม่สำเร็จ: "+error.message);return}
-  selected={};$("customer").value="";$("note").value="";$("payment").value="ยังไม่จ่าย";toast("เพิ่มคิว #"+queueNo+" แล้ว");await loadAll();
-}
-function orderCard(o){
-  const items=(o.items||[]).map(x=>`${esc(x.name)} × ${x.qty}`).join(" • ");
-  let acts="";
-  if(o.status==="รอคิว")acts+=`<button class="btn orange" onclick="setStatus('${o.id}','กำลังทำ')">▶ เริ่มทำ</button>`;
-  if(o.status==="กำลังทำ")acts+=`<button class="btn green" onclick="setStatus('${o.id}','เสร็จแล้ว')">✓ เสร็จแล้ว</button>`;
-  if(o.status!=="เสร็จแล้ว"&&o.status!=="ยกเลิก")acts+=`<button class="btn ghost" onclick="setPayment('${o.id}','${o.payment_status==="จ่ายแล้ว"?"ยังไม่จ่าย":"จ่ายแล้ว"}')">${o.payment_status==="จ่ายแล้ว"?"ยกเลิกจ่าย":"💵 รับเงิน"}</button>`;
-  if(o.status!=="ยกเลิก"&&o.status!=="เสร็จแล้ว")acts+=`<button class="btn red" onclick="setStatus('${o.id}','ยกเลิก')">ยกเลิก</button>`;
-  return `<div class="order"><div class="ordertop"><div><span class="qno">#${o.queue_no}</span> ${esc(o.customer_name||"ไม่ระบุชื่อ")}</div><strong>${money(o.total_amount)}</strong></div>
-  <div class="chips">${statusChip(o.status)}${statusChip(o.order_type)}${statusChip(o.payment_status)}</div>
-  <div class="items">${items||"-"}${o.note?`<br>📝 ${esc(o.note)}`:""}</div><div class="actions">${acts}</div></div>`;
-}
-function renderWaiting(){
-  const arr=orders.filter(o=>o.status==="รอคิว"||o.status==="กำลังทำ");
-  $("waitingList").innerHTML=arr.length?arr.map(orderCard).join(""):'<p class="muted">ไม่มีคิวรอ</p>';
-}
-function renderOrders(){
-  const q=($("search").value||"").toLowerCase();
-  const arr=orders.filter(o=>String(o.queue_no).includes(q)||String(o.customer_name||"").toLowerCase().includes(q));
-  $("ordersList").innerHTML=arr.length?arr.map(orderCard).join(""):'<p class="muted">ไม่พบรายการ</p>';
-}
-window.setStatus=async(id,status)=>{const {error}=await db.from("orders").update({status,updated_at:new Date().toISOString()}).eq("id",id);if(error)toast(error.message);else await loadAll()}
-window.setPayment=async(id,payment_status)=>{const {error}=await db.from("orders").update({payment_status,updated_at:new Date().toISOString()}).eq("id",id);if(error)toast(error.message);else await loadAll()}
-function stats(){
- const w=orders.filter(o=>o.status==="รอคิว").length,m=orders.filter(o=>o.status==="กำลังทำ").length,d=orders.filter(o=>o.status==="เสร็จแล้ว").length,s=orders.filter(o=>o.status==="เสร็จแล้ว").reduce((a,o)=>a+Number(o.total_amount||0),0);
- $("statWaiting").textContent=w;$("statMaking").textContent=m;$("statDone").textContent=d;$("statSales").textContent=money(s);
-}
-function renderReport(){
- const done=orders.filter(o=>o.status==="เสร็จแล้ว"), sales=done.reduce((a,o)=>a+Number(o.total_amount||0),0);
- const map={};done.forEach(o=>(o.items||[]).forEach(i=>{map[i.name]=(map[i.name]||0)+Number(i.qty)}));
- $("report").innerHTML=`<div class="stats"><div class="stat"><span class="muted">ออเดอร์เสร็จ</span><b>${done.length}</b></div><div class="stat"><span class="muted">ยอดขาย</span><b>${money(sales)}</b></div><div class="stat"><span class="muted">ยังไม่จ่าย</span><b>${orders.filter(o=>o.payment_status==="ยังไม่จ่าย"&&o.status!=="ยกเลิก").length}</b></div><div class="stat"><span class="muted">ทั้งหมด</span><b>${orders.length}</b></div></div>
- <h3>จำนวนขายแยกตามเมนู</h3>${Object.keys(map).length?Object.entries(map).map(([k,v])=>`<div style="display:flex;justify-content:space-between;border-bottom:1px solid var(--line);padding:10px 0"><span>${esc(k)}</span><b>${v}</b></div>`).join(""):'<p class="muted">ยังไม่มีออเดอร์ที่เสร็จ</p>'}`;
-}
-function renderAdmin(){
- $("menuAdmin").innerHTML=menus.map(m=>`<div class="menuitem"><input value="${esc(m.name)}" id="mn-${m.id}"><input type="number" step="0.01" value="${m.price}" id="mp-${m.id}"><button class="btn ${m.active?"green":"ghost"}" onclick="toggleMenu('${m.id}',${!m.active})">${m.active?"เปิด":"ปิด"}</button><button class="btn primary" onclick="saveMenu('${m.id}')">บันทึก</button></div>`).join("");
-}
-window.saveMenu=async id=>{const name=$("mn-"+id).value.trim(),price=Number($("mp-"+id).value);if(!name||price<0)return;const {error}=await db.from("menus").update({name,price,updated_at:new Date().toISOString()}).eq("id",id);if(error)toast(error.message);else await loadAll()}
-window.toggleMenu=async(id,active)=>{const {error}=await db.from("menus").update({active,updated_at:new Date().toISOString()}).eq("id",id);if(error)toast(error.message);else await loadAll()}
-$("addMenu").onclick=async()=>{const name=$("newMenuName").value.trim(),price=Number($("newMenuPrice").value);if(!name||price<0){toast("กรอกชื่อและราคา");return}const {error}=await db.from("menus").insert({name,price,active:true});if(error)toast(error.message);else{$("newMenuName").value="";$("newMenuPrice").value="";await loadAll()}}
-$("addOrder").onclick=addOrder;$("search").oninput=renderOrders;
-document.querySelectorAll(".tab").forEach(b=>b.onclick=()=>{document.querySelectorAll(".tab").forEach(x=>x.classList.replace("primary","ghost"));b.classList.replace("ghost","primary");document.querySelectorAll("section[id^=tab-]").forEach(s=>s.classList.add("hidden"));$("tab-"+b.dataset.tab).classList.remove("hidden")});
-
-async function start(){
- const {data}=await db.auth.getSession();user=data.session?.user||null;
- if(user){$("authView").classList.add("hidden");$("appView").classList.remove("hidden");await loadAll();subscribe()}
- else{$("authView").classList.remove("hidden");$("appView").classList.add("hidden")}
-}
-$("loginBtn").onclick=async()=>{const {error}=await db.auth.signInWithPassword({email:$("email").value.trim(),password:$("password").value});if(error)toast(error.message);else start()}
-$("signupBtn").onclick=async()=>{const {data,error}=await db.auth.signUp({email:$("email").value.trim(),password:$("password").value});if(error)toast(error.message);else toast(data.session?"สร้างบัญชีและเข้าใช้งานแล้ว":"สร้างบัญชีแล้ว กรุณาตรวจอีเมลยืนยันก่อนเข้าสู่ระบบ")}
-$("logoutBtn").onclick=async()=>{await db.auth.signOut();location.reload()}
-function subscribe(){
- db.channel("somchai-live").on("postgres_changes",{event:"*",schema:"public",table:"orders"},()=>loadAll()).on("postgres_changes",{event:"*",schema:"public",table:"menus"},()=>loadAll()).subscribe();
-}
-start();
-</script>
-</body>
-</html>
+<div id="auth" class="auth"><div class="authCard"><div class="logo"><div class="logoMark">🍢</div><div><h1>สมชายหมูปิ้ง</h1><p>ระบบคิวออนไลน์สำหรับร้าน</p></div></div><label>อีเมล</label><input id="email" type="email" placeholder="you@example.com"><label>รหัสผ่าน</label><input id="password" type="password" placeholder="อย่างน้อย 6 ตัวอักษร"><div style="display:flex;gap:8px;margin-top:18px"><button class="btn primary" id="login" style="flex:1">เข้าสู่ระบบ</button><button class="btn soft" id="signup" style="flex:1">สร้างบัญชี</button></div><p style="color:var(--muted);font-size:12px;margin-top:15px">บัญชีแรกใช้สำหรับเจ้าของร้าน/ผู้ดูแลระบบ</p></div></div>
+<div id="app" class="app hidden"><header class="topbar"><div class="topBrand"><div class="mini">🍢</div><div><strong>สมชายหมูปิ้ง</strong><small>ระบบจัดการคิวและยอดขาย</small></div></div><div style="display:flex;align-items:center;gap:10px"><span class="statusOnline"><span class="dot"></span>ออนไลน์</span><button class="btn soft" id="logout">ออกจากระบบ</button></div></header><div class="layout">
+<aside class="side"><div class="shop"><strong>สมชายหมูปิ้ง</strong><small>เจ้าเก่าอยุธยา</small></div><nav class="nav"><button data-page="home" class="active">⌂ หน้าหลัก</button><button data-page="new">＋ จดคิวใหม่</button><button data-page="orders">▤ คิวทั้งหมด</button><button data-page="menus">▦ เมนูและราคา</button><button data-page="report">▥ ประวัติการขาย</button></nav><div class="sideFoot"><button class="btn" id="logout2">↪ ออกจากระบบ</button></div></aside>
+<main class="main">
+<section id="page-home" class="section active"><div class="pageHead"><div><h2>ภาพรวมร้าน</h2><p id="todayText"></p></div><div class="headActions"><button class="btn primary" onclick="go('new')">＋ จดคิวใหม่</button></div></div><div class="stats"><div class="stat"><div><small>คิวรอเรียก</small><b id="sWait">0</b></div><div class="statIcon siRed">⏱️</div></div><div class="stat"><div><small>กำลังบริการ</small><b id="sMaking">0</b></div><div class="statIcon siGreen">👨‍🍳</div></div><div class="stat"><div><small>ยอดขายวันนี้</small><b id="sSales">฿0</b></div><div class="statIcon siBlue">▥</div></div><div class="stat"><div><small>ลูกค้าวันนี้</small><b id="sCustomers">0</b></div><div class="statIcon siOrange">👥</div></div></div><div class="grid2"><div class="card"><div class="cardTitle"><h3>คิวทั้งหมด</h3><button class="btn soft" onclick="go('orders')">ดูทั้งหมด →</button></div><div class="filters"><input id="searchHome" class="input" placeholder="ค้นหาคิว / ชื่อลูกค้า / เมนู"><select id="filterHome" class="select"><option value="all">ทั้งหมด</option><option value="รอคิว">รอเรียก</option><option value="กำลังทำ">กำลังบริการ</option><option value="เสร็จแล้ว">เรียกแล้ว</option></select></div><div id="homeTable"></div></div><div class="card callPanel"><div class="cardTitle"><h3>กำลังเรียกคิว</h3><span class="badge wait">LIVE</span></div><div id="callPanel"></div></div></div></section>
+<section id="page-new" class="section"><div class="pageHead"><div><h2>จดคิวใหม่</h2><p>สร้างออเดอร์ให้ลูกค้าในไม่กี่วินาที</p></div></div><div class="grid2"><div class="card"><div class="formGrid"><div class="field"><label>ชื่อลูกค้า</label><input id="customer" class="input" placeholder="เช่น คุณสมชาย"></div><div class="field"><label>ประเภทการรับ</label><select id="otype" class="select"><option>หน้าร้าน</option><option>โทรสั่ง</option></select></div><div class="field fullRow"><label>เลือกเมนู</label><div id="menuBuilder"></div></div><div class="field"><label>การชำระเงิน</label><select id="payment" class="select"><option>ยังไม่จ่าย</option><option>จ่ายแล้ว</option></select></div><div class="field"><label>หมายเหตุ</label><input id="note" class="input" placeholder="เช่น ไม่ใส่ผัก"></div></div><div class="totalLine"><span>รวมทั้งหมด</span><b id="total">฿0</b></div><button class="btn primary full" style="margin-top:14px" id="addOrder">ยืนยันการจดคิว</button></div><div class="card"><div class="cardTitle"><h3>คิวล่าสุด</h3></div><div id="newRecent"></div></div></div></section>
+<section id="page-orders" class="section"><div class="pageHead"><div><h2>คิวทั้งหมด</h2><p>จัดการสถานะคิวและการชำระเงิน</p></div></div><div class="card"><div class="filters"><input id="search" class="input" placeholder="ค้นหาคิว / ชื่อลูกค้า"><select id="filter" class="select" style="max-width:180px"><option value="all">ทุกสถานะ</option><option>รอคิว</option><option>กำลังทำ</option><option>เสร็จแล้ว</option><option>ยกเลิก</option></select></div><div id="ordersTable"></div></div></section>
+<section id="page-menus" class="section"><div class="pageHead"><div><h2>เมนูและราคา</h2><p>จัดการรายการอาหารและราคาได้จากหน้านี้</p></div></div><div class="grid2"><div class="card"><div id="menuAdmin"></div></div><div class="card"><h3>เพิ่มเมนูใหม่</h3><div class="field" style="margin-top:14px"><label>ชื่อเมนู</label><input id="newName" class="input" placeholder="เช่น หมูปิ้งชุดใหญ่"></div><div class="field" style="margin-top:12px"><label>ราคา</label><input id="newPrice" type="number" class="input" placeholder="0"></div><button class="btn primary full" style="margin-top:14px" id="addMenu">เพิ่มเมนู</button></div></div></section>
+<section id="page-report" class="section"><div class="pageHead"><div><h2>ประวัติการขาย</h2><p>สรุปยอดขายของวันนี้</p></div></div><div class="card" id="report"></div></section>
+</main></div><nav class="mobileNav"><button data-page="home" class="active">⌂<br>หน้าหลัก</button><button data-page="new">＋<br>จดคิว</button><button data-page="orders">▤<br>คิวทั้งหมด</button><button data-page="menus">▦<br>เมนู</button></nav></div><div id="toast" style="position:fixed;right:16px;bottom:18px;background:#172033;color:#fff;padding:12px 15px;border-radius:12px;display:none;z-index:100"></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script>
+const URL="https://bwlpuaaywyzmpidmclsb.supabase.co",KEY="sb_publishable_LdH8QTbu6TPKnaLRnroW5A_yHgwvfIw",db=supabase.createClient(URL,KEY);let user=null,menus=[],orders=[],sel={};
+const $=x=>document.getElementById(x),money=n=>'฿'+Number(n||0).toLocaleString('th-TH',{maximumFractionDigits:2}),esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));function startDay(){let d=new Date();d.setHours(0,0,0,0);return d.toISOString()}function toast(s){let t=$('toast');t.textContent=s;t.style.display='block';setTimeout(()=>t.style.display='none',2200)}
+function go(p){document.querySelectorAll('.section').forEach(x=>x.classList.remove('active'));$('page-'+p).classList.add('active');document.querySelectorAll('[data-page]').forEach(x=>x.classList.toggle('active',x.dataset.page===p));if(p==='home')renderHome();if(p==='orders')renderOrders();if(p==='new')renderNew();if(p==='menus')renderMenus();if(p==='report')renderReport()}
+document.querySelectorAll('[data-page]').forEach(b=>b.onclick=()=>go(b.dataset.page));
+async function load(){let [m,o]=await Promise.all([db.from('menus').select('*').order('created_at'),db.from('orders').select('*').gte('created_at',startDay()).order('queue_no',{ascending:false})]);if(m.error||o.error){toast((m.error||o.error).message);return}menus=m.data||[];orders=o.data||[];renderAll()}
+function renderAll(){renderHome();renderNew();renderOrders();renderMenus();renderReport()}
+function status(s){return `<span class="badge ${s==='รอคิว'?'wait':s==='กำลังทำ'?'making':s==='เสร็จแล้ว'?'done':'unpaid'}">${esc(s)}</span>`}
+function row(o){let items=(o.items||[]).map(i=>`${esc(i.name)} ${i.qty} ${i.name.includes('ข้าว')?'ห่อ':'ไม้'}`).join(' • ');return `<tr><td><div class="qnum">#${o.queue_no}</div><div class="items">${new Date(o.created_at).toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit'})}</div></td><td><b>${esc(o.customer_name||'ลูกค้า')}</b><div class="items">${items}</div></td><td>${status(o.status)}</td><td>${o.payment_status==='จ่ายแล้ว'?'<span class="badge paid">จ่ายแล้ว</span>':'<span class="badge unpaid">ยังไม่จ่าย</span>'}</td><td><div style="display:flex;gap:6px;flex-wrap:wrap">${o.status==='รอคิว'?`<button class="btn primary" onclick="setStatus('${o.id}','กำลังทำ')">เรียกคิว</button>`:''}${o.status==='กำลังทำ'?`<button class="btn green" onclick="setStatus('${o.id}','เสร็จแล้ว')">เสร็จสิ้น</button>`:''}${o.status!=='เสร็จแล้ว'&&o.status!=='ยกเลิก'?`<button class="btn soft" onclick="setPay('${o.id}','${o.payment_status==='จ่ายแล้ว'?'ยังไม่จ่าย':'จ่ายแล้ว'}')">${o.payment_status==='จ่ายแล้ว'?'ยกเลิกจ่าย':'รับเงิน'}</button>`:''}</div></td></tr>`}
+function table(arr){return arr.length?`<div style="overflow:auto"><table class="queueTable"><thead><tr><th>คิว</th><th>รายการ</th><th>สถานะ</th><th>ชำระเงิน</th><th>จัดการ</th></tr></thead><tbody>${arr.map(row).join('')}</tbody></table></div>`:'<p style="color:var(--muted)">ยังไม่มีคิว</p>'}
+function renderHome(){let q=orders.filter(o=>o.status!=='ยกเลิก');$('sWait').textContent=orders.filter(o=>o.status==='รอคิว').length;$('sMaking').textContent=orders.filter(o=>o.status==='กำลังทำ').length;$('sSales').textContent=money(orders.filter(o=>o.status==='เสร็จแล้ว').reduce((a,o)=>a+Number(o.total_amount),0));$('sCustomers').textContent=orders.length;$('todayText').textContent=new Date().toLocaleDateString('th-TH',{weekday:'long',year:'numeric',month:'long',day:'numeric'});let search=($('searchHome').value||'').toLowerCase(),f=$('filterHome').value;let arr=q.filter(o=>(f==='all'||o.status===f)&&(`${o.queue_no} ${o.customer_name||''} ${(o.items||[]).map(i=>i.name).join(' ')}`).toLowerCase().includes(search));$('homeTable').innerHTML=table(arr.slice(0,8));let active=orders.find(o=>o.status==='กำลังทำ')||orders.find(o=>o.status==='รอคิว');$('callPanel').innerHTML=active?`<div class="callBox"><div class="meg">📣</div><div class="label">${active.status==='กำลังทำ'?'กำลังบริการ':'คิวถัดไป'}</div><div class="bigQ">${String(active.queue_no).padStart(3,'0')}</div><div class="callItems">${(active.items||[]).map(i=>`${esc(i.name)} ${i.qty} ${i.name.includes('ข้าว')?'ห่อ':'ไม้'}`).join('<br>')}</div>${active.status==='รอคิว'?`<button class="btn primary full" style="margin-top:12px" onclick="setStatus('${active.id}','กำลังทำ')">เรียกคิว ${active.queue_no} →</button>`:`<button class="btn green full" style="margin-top:12px" onclick="setStatus('${active.id}','เสร็จแล้ว')">เสร็จสิ้น ✓</button>`}<div class="nextQ">${orders.filter(o=>o.status==='รอคิว').slice(1,4).map(o=>`<div>${String(o.queue_no).padStart(3,'0')}</div>`).join('')||'<div>-</div><div>-</div><div>-</div>'}</div></div>`:'<div style="text-align:center;color:var(--muted);padding:50px 10px">ยังไม่มีคิวรอเรียก</div>'}
+function renderOrders(){let s=($('search').value||'').toLowerCase(),f=$('filter').value;let arr=orders.filter(o=>(f==='all'||o.status===f)&&(`${o.queue_no} ${o.customer_name||''} ${(o.items||[]).map(i=>i.name).join(' ')}`).toLowerCase().includes(s));$('ordersTable').innerHTML=table(arr)}
+function renderNew(){let total=0;$('menuBuilder').innerHTML=menus.filter(m=>m.active).map(m=>{let q=sel[m.id]||0;total+=q*Number(m.price);return `<div class="menuRow"><div><b>${esc(m.name)}</b><div style="font-size:12px;color:var(--red);font-weight:800">${money(m.price)}</div></div><div class="qty"><button onclick="qty('${m.id}',-1)">−</button><span>${q}</span><button onclick="qty('${m.id}',1)">+</button></div><b>${money(q*m.price)}</b></div>`}).join('')||'<p style="color:var(--muted)">ยังไม่มีเมนู</p>';$('total').textContent=money(total);$('newRecent').innerHTML=orders.slice(0,5).map(o=>`<div class="reportItem"><span>#${String(o.queue_no).padStart(3,'0')} ${esc(o.customer_name||'ลูกค้า')}</span><b>${money(o.total_amount)}</b></div>`).join('')||'<p style="color:var(--muted)">ยังไม่มีคิว</p>'}
+window.qty=(id,d)=>{sel[id]=Math.max(0,(sel[id]||0)+d);renderNew()};function items(){return menus.filter(m=>(sel[m.id]||0)>0).map(m=>({menu_id:m.id,name:m.name,price:Number(m.price),qty:sel[m.id],subtotal:Number(m.price)*sel[m.id]}))}
+$('addOrder').onclick=async()=>{let it=items();if(!it.length)return toast('เลือกเมนูก่อนครับ');let {data}=await db.from('orders').select('queue_no').gte('created_at',startDay()).order('queue_no',{ascending:false}).limit(1);let no=(data?.[0]?.queue_no||0)+1,total=it.reduce((a,x)=>a+x.subtotal,0);let {error}=await db.from('orders').insert({queue_no:no,customer_name:$('customer').value.trim()||null,note:$('note').value.trim()||null,order_type:$('otype').value,payment_status:$('payment').value,status:'รอคิว',total_amount:total,items:it,created_by:user.id});if(error)return toast(error.message);sel={};$('customer').value='';$('note').value='';$('payment').value='ยังไม่จ่าย';toast('เพิ่มคิว #'+no+' แล้ว');await load();go('home')}
+window.setStatus=async(id,s)=>{let {error}=await db.from('orders').update({status:s,updated_at:new Date().toISOString()}).eq('id',id);if(error)toast(error.message);else load()};window.setPay=async(id,s)=>{let {error}=await db.from('orders').update({payment_status:s,updated_at:new Date().toISOString()}).eq('id',id);if(error)toast(error.message);else load()};
+function renderMenus(){$('menuAdmin').innerHTML=menus.map(m=>`<div class="menuRow"><div><input class="input" id="n-${m.id}" value="${esc(m.name)}"></div><div><input class="input" id="p-${m.id}" type="number" value="${m.price}"></div><div><button class="btn ${m.active?'green':'soft'}" onclick="toggleMenu('${m.id}',${!m.active})">${m.active?'เปิด':'ปิด'}</button></div><div><button class="btn primary" onclick="saveMenu('${m.id}')">บันทึก</button></div></div>`).join('')||'<p style="color:var(--muted)">ยังไม่มีเมนู</p>'}
+window.saveMenu=async id=>{let {error}=await db.from('menus').update({name:$('n-'+id).value.trim(),price:Number($('p-'+id).value),updated_at:new Date().toISOString()}).eq('id',id);if(error)toast(error.message);else load()};window.toggleMenu=async(id,a)=>{let {error}=await db.from('menus').update({active:a,updated_at:new Date().toISOString()}).eq('id',id);if(error)toast(error.message);else load()};$('addMenu').onclick=async()=>{let n=$('newName').value.trim(),p=Number($('newPrice').value);if(!n||p<0)return toast('กรอกชื่อและราคา');let {error}=await db.from('menus').insert({name:n,price:p,active:true});if(error)toast(error.message);else{$('newName').value='';$('newPrice').value='';load()}}
+function renderReport(){let done=orders.filter(o=>o.status==='เสร็จแล้ว'),sales=done.reduce((a,o)=>a+Number(o.total_amount),0),unpaid=orders.filter(o=>o.payment_status==='ยังไม่จ่าย'&&o.status!=='ยกเลิก').reduce((a,o)=>a+Number(o.total_amount),0),map={};done.forEach(o=>(o.items||[]).forEach(i=>map[i.name]=(map[i.name]||0)+Number(i.qty)));$('report').innerHTML=`<div class="reportCards"><div class="reportItem"><span>ยอดขาย</span><b>${money(sales)}</b></div><div class="reportItem"><span>ออเดอร์เสร็จ</span><b>${done.length}</b></div><div class="reportItem"><span>ยอดค้างชำระ</span><b>${money(unpaid)}</b></div></div><h3 style="margin:24px 0 10px">ยอดขายแยกเมนู</h3>${Object.entries(map).map(([k,v])=>`<div class="reportItem" style="margin:7px 0"><span>${esc(k)}</span><b>${v}</b></div>`).join('')||'<p style="color:var(--muted)">ยังไม่มีข้อมูล</p>'}`}
+$('search').oninput=renderOrders;$('filter').onchange=renderOrders;$('searchHome').oninput=renderHome;$('filterHome').onchange=renderHome;
+async function init(){let {data}=await db.auth.getSession();user=data.session?.user||null;if(user){$('auth').classList.add('hidden');$('app').classList.remove('hidden');await load();db.channel('somchai-ui-live').on('postgres_changes',{event:'*',schema:'public',table:'orders'},load).on('postgres_changes',{event:'*',schema:'public',table:'menus'},load).subscribe()}else{$('auth').classList.remove('hidden');$('app').classList.add('hidden')}}
+$('login').onclick=async()=>{let {error}=await db.auth.signInWithPassword({email:$('email').value.trim(),password:$('password').value});if(error)toast(error.message);else init()};$('signup').onclick=async()=>{let {data,error}=await db.auth.signUp({email:$('email').value.trim(),password:$('password').value});if(error)toast(error.message);else toast(data.session?'สร้างบัญชีแล้ว':'สร้างบัญชีแล้ว กรุณายืนยันอีเมล')};$('logout').onclick=async()=>{await db.auth.signOut();location.reload()};$('logout2').onclick=async()=>{await db.auth.signOut();location.reload()};init();
+</script></body></html>
