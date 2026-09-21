@@ -37,41 +37,170 @@
 <section id="page-report" class="section"><div class="pageHead"><div><h2>ประวัติการขาย</h2><p>สรุปยอดขายและรายการที่ผ่านมา</p></div></div><div class="card" id="report"></div></section>
 </main></div><nav class="mobileNav"><button data-page="home" class="active">⌂<br>หน้าหลัก</button><button data-page="new">＋<br>สั่งอาหาร</button><button data-page="orders">▤<br>คิวของฉัน</button><button data-page="menus">▦<br>เมนู</button></nav></div><div id="toast" style="position:fixed;right:16px;bottom:18px;background:#172033;color:#fff;padding:12px 15px;border-radius:12px;display:none;z-index:100"></div>
 <script>
+
 const SUPABASE_URL="https://bwlpuaaywyzmpidmclsb.supabase.co";
 const SUPABASE_KEY="sb_publishable_LdH8QTbu6TPKnaLRnroW5A_yHgwvfIw";
-let db=null,user=null,menus=[],orders=[],sel={},supabaseReady=false;
-function setAuthMsg(msg,ok=false){const el=$("authMsg");if(!el)return;el.textContent=msg;el.style.display=msg?"block":"none";el.style.background=ok?"#e8f9f0":"#fff0f0";el.style.color=ok?"#087b45":"#b42323"}
-function setLoginBusy(b){const a=$("login"),s=$("signup");if(!a||!s)return;a.disabled=b||!supabaseReady;s.disabled=b||!supabaseReady;a.textContent=b?"กำลังเข้าสู่ระบบ…":(supabaseReady?"เข้าสู่ระบบ":"กำลังเชื่อมต่อ…")}
-async function loadSupabase(){
-  if(window.supabase?.createClient)return true;
-  // Try the official UMD browser build first.
-  const urls=[
-    "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js",
-    "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js",
-    "https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.js"
-  ];
-  for(const src of urls){
-    try{
-      await new Promise((resolve,reject)=>{
-        const sc=document.createElement("script");
-        sc.src=src; sc.async=true;
-        sc.onload=()=>resolve();
-        sc.onerror=()=>reject(new Error("โหลด Supabase ไม่สำเร็จ"));
-        document.head.appendChild(sc);
-      });
-      if(window.supabase?.createClient)return true;
-    }catch(e){}
-  }
-  // Final fallback: browser ESM import.
-  try{
-    const mod=await import("https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm");
-    if(mod?.createClient){
-      window.supabase={createClient:mod.createClient};
-      return true;
-    }
-  }catch(e){}
-  return false;
+let db=null,user=null,menus=[],orders=[],sel={},supabaseReady=false,pollTimer=null;
+
+function setAuthMsg(msg,ok=false){
+  const el=$("authMsg"); if(!el)return;
+  el.textContent=msg; el.style.display=msg?"block":"none";
+  el.style.background=ok?"#e8f9f0":"#fff0f0";
+  el.style.color=ok?"#087b45":"#b42323";
 }
+function setLoginBusy(b){
+  const a=$("login"),s=$("signup"); if(!a||!s)return;
+  a.disabled=b||!supabaseReady; s.disabled=b||!supabaseReady;
+  a.textContent=b?"กำลังเข้าสู่ระบบ…":(supabaseReady?"เข้าสู่ระบบ":"กำลังเชื่อมต่อ…");
+}
+
+/* Direct Supabase REST client.
+   This version does NOT depend on jsDelivr/unpkg, so the Login page
+   still works when a browser/network blocks external JavaScript CDNs. */
+function createRestClient(){
+  const base=SUPABASE_URL.replace(/\/$/,"");
+  const key=SUPABASE_KEY;
+  const sessionKey="somchai_supabase_session_v1";
+
+  const headers=(token)=>({
+    "apikey":key,
+    "Authorization":"Bearer "+(token||key),
+    "Content-Type":"application/json"
+  });
+
+  async function authFetch(path, options={}){
+    const r=await fetch(base+"/auth/v1/"+path,{
+      ...options,
+      headers:{...headers(),...(options.headers||{})}
+    });
+    const text=await r.text();
+    let data={}; try{data=text?JSON.parse(text):{}}catch{data={message:text}};
+    if(!r.ok) throw new Error(data.error_description||data.msg||data.message||data.error||("HTTP "+r.status));
+    return data;
+  }
+
+  function saveSession(data){
+    if(data?.access_token){
+      const sess={
+        access_token:data.access_token,
+        refresh_token:data.refresh_token,
+        expires_in:data.expires_in,
+        expires_at:Math.floor(Date.now()/1000)+(data.expires_in||3600),
+        user:data.user||null
+      };
+      localStorage.setItem(sessionKey,JSON.stringify(sess));
+      return sess;
+    }
+    return data;
+  }
+  function readSession(){
+    try{return JSON.parse(localStorage.getItem(sessionKey)||"null")}catch{return null}
+  }
+
+  const auth={
+    async getSession(){
+      let sess=readSession();
+      if(!sess?.access_token) return {data:{session:null},error:null};
+      if(sess.expires_at && sess.expires_at < Math.floor(Date.now()/1000)+30 && sess.refresh_token){
+        try{
+          const fresh=await authFetch("token?grant_type=refresh_token",{
+            method:"POST",body:JSON.stringify({refresh_token:sess.refresh_token})
+          });
+          sess=saveSession(fresh);
+        }catch(e){
+          localStorage.removeItem(sessionKey);
+          return {data:{session:null},error:null};
+        }
+      }
+      return {data:{session:sess},error:null};
+    },
+    async signInWithPassword({email,password}){
+      try{
+        const data=await authFetch("token?grant_type=password",{
+          method:"POST",body:JSON.stringify({email,password})
+        });
+        saveSession(data);
+        return {data,error:null};
+      }catch(error){return {data:null,error}}
+    },
+    async signUp({email,password}){
+      try{
+        const data=await authFetch("signup",{
+          method:"POST",body:JSON.stringify({email,password})
+        });
+        if(data?.access_token) saveSession(data);
+        return {data,error:null};
+      }catch(error){return {data:null,error}}
+    },
+    async signOut(){
+      const sess=readSession();
+      try{
+        if(sess?.access_token){
+          await fetch(base+"/auth/v1/logout",{
+            method:"POST",
+            headers:headers(sess.access_token)
+          });
+        }
+      }catch(e){}
+      localStorage.removeItem(sessionKey);
+      return {error:null};
+    }
+  };
+
+  function table(name){
+    const state={select:"*",filters:[],orders:[],limit:null,method:"GET",body:null};
+    const api={
+      select(cols="*"){
+        state.select=cols; state.method="GET"; return api;
+      },
+      order(column,{ascending=true}={}){
+        state.orders.push(column+"."+(ascending?"asc":"desc")); return api;
+      },
+      gte(column,value){state.filters.push([column,"gte",value]);return api;},
+      eq(column,value){state.filters.push([column,"eq",value]);return api;},
+      limit(n){state.limit=n;return api;},
+      insert(body){state.method="POST";state.body=body;return api;},
+      update(body){state.method="PATCH";state.body=body;return api;},
+      async then(resolve,reject){
+        try{const result=await run();resolve(result)}catch(e){reject(e)}
+      }
+    };
+    async function run(){
+      const sess=readSession();
+      if(!sess?.access_token) return {data:null,error:new Error("กรุณาเข้าสู่ระบบก่อน")};
+      let url=base+"/rest/v1/"+encodeURIComponent(name);
+      const qs=[];
+      if(state.method==="GET") qs.push("select="+encodeURIComponent(state.select));
+      for(const [c,op,v] of state.filters) qs.push(c+"="+op+"."+encodeURIComponent(String(v)));
+      if(state.orders.length) qs.push("order="+encodeURIComponent(state.orders.join(",")));
+      if(state.limit!=null) qs.push("limit="+state.limit);
+      if(qs.length) url+="?"+qs.join("&");
+      const h=headers(sess.access_token);
+      if(state.method==="GET") h["Accept-Profile"]="public"; else h["Content-Profile"]="public";
+      if(state.method==="POST") h["Prefer"]="return=representation";
+      if(state.method==="PATCH") h["Prefer"]="return=representation";
+      const r=await fetch(url,{method:state.method,headers:h,body:state.body?JSON.stringify(state.body):undefined});
+      const text=await r.text();
+      let data=[]; try{data=text?JSON.parse(text):[]}catch{data=text}
+      if(!r.ok) return {data:null,error:new Error(data?.message||data?.details||data?.hint||("HTTP "+r.status))};
+      return {data,error:null};
+    }
+    return api;
+  }
+
+  return {
+    auth,
+    from:table,
+    channel(){
+      const ch={on(){return ch},subscribe(){return ch}};
+      return ch;
+    }
+  };
+}
+
+async function loadSupabase(){ return true; }
+db=createRestClient();
+supabaseReady=true;
 
 const $=x=>document.getElementById(x),money=n=>'฿'+Number(n||0).toLocaleString('th-TH',{maximumFractionDigits:2}),esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));function startDay(){let d=new Date();d.setHours(0,0,0,0);return d.toISOString()}function toast(s){let t=$('toast');t.textContent=s;t.style.display='block';setTimeout(()=>t.style.display='none',2200)}
 function go(p){document.querySelectorAll('.section').forEach(x=>x.classList.remove('active'));$('page-'+p).classList.add('active');document.querySelectorAll('[data-page]').forEach(x=>x.classList.toggle('active',x.dataset.page===p));if(p==='home')renderHome();if(p==='orders')renderOrders();if(p==='new')renderNew();if(p==='menus')renderMenus();if(p==='report')renderReport()}
@@ -97,12 +226,20 @@ async function init(){
     const {data,error}=await db.auth.getSession();
     if(error) throw error;
     user=data.session?.user||null;
-    if(user){$('auth').classList.add('hidden');$('app').classList.remove('hidden');await load();db.channel('somchai-ui-live').on('postgres_changes',{event:'*',schema:'public',table:'orders'},load).on('postgres_changes',{event:'*',schema:'public',table:'menus'},load).subscribe()}else{$('auth').classList.remove('hidden');$('app').classList.add('hidden')}
+    if(user){
+  $('auth').classList.add('hidden');$('app').classList.remove('hidden');
+  await load();
+  if(pollTimer) clearInterval(pollTimer);
+  pollTimer=setInterval(()=>{ if(user) load().catch(()=>{}); },5000);
+}else{
+  $('auth').classList.remove('hidden');$('app').classList.add('hidden');
+  if(pollTimer){clearInterval(pollTimer);pollTimer=null}
+}
   }catch(e){setAuthMsg(e?.message||String(e))}
 }
 $('login').onclick=async()=>{
   setAuthMsg("");
-  if(!db||!supabaseReady)return setAuthMsg("ระบบเชื่อมต่อยังไม่พร้อม กรุณารอ 2-3 วินาทีแล้วลองใหม่ หรือรีเฟรชหน้าเว็บ");
+  if(!db||!supabaseReady)return setAuthMsg("ระบบเชื่อมต่อยังไม่พร้อม กรุณารีเฟรชหน้าเว็บแล้วลองใหม่");
   const email=$('email').value.trim(),password=$('password').value;
   if(!email||!password)return setAuthMsg("กรุณากรอกอีเมลและรหัสผ่าน");
   setLoginBusy(true);
@@ -110,7 +247,7 @@ $('login').onclick=async()=>{
 };
 $('signup').onclick=async()=>{
   setAuthMsg("");
-  if(!db||!supabaseReady)return setAuthMsg("ระบบเชื่อมต่อยังไม่พร้อม กรุณารอ 2-3 วินาทีแล้วลองใหม่ หรือรีเฟรชหน้าเว็บ");
+  if(!db||!supabaseReady)return setAuthMsg("ระบบเชื่อมต่อยังไม่พร้อม กรุณารีเฟรชหน้าเว็บแล้วลองใหม่");
   const email=$('email').value.trim(),password=$('password').value;
   if(!email||!password)return setAuthMsg("กรุณากรอกอีเมลและรหัสผ่าน");
   if(password.length<6)return setAuthMsg("รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร");
@@ -125,7 +262,7 @@ $('password').addEventListener('keydown',e=>{if(e.key==='Enter')$('login').click
   const ok=await loadSupabase();
   if(!ok){
     setLoginBusy(false);
-    setAuthMsg("ไม่สามารถโหลด Supabase ได้ กรุณาตรวจสอบอินเทอร์เน็ต/ตัวบล็อกสคริปต์ แล้วรีเฟรชหน้าเว็บ");
+    setAuthMsg("ระบบเชื่อมต่อฐานข้อมูลไม่พร้อม กรุณารีเฟรชหน้าเว็บแล้วลองใหม่");
     return;
   }
   try{
