@@ -39,15 +39,37 @@
 <script>
 const SUPABASE_URL="https://bwlpuaaywyzmpidmclsb.supabase.co";
 const SUPABASE_KEY="sb_publishable_LdH8QTbu6TPKnaLRnroW5A_yHgwvfIw";
-let db=null,user=null,menus=[],orders=[],sel={};
+let db=null,user=null,menus=[],orders=[],sel={},supabaseReady=false;
 function setAuthMsg(msg,ok=false){const el=$("authMsg");if(!el)return;el.textContent=msg;el.style.display=msg?"block":"none";el.style.background=ok?"#e8f9f0":"#fff0f0";el.style.color=ok?"#087b45":"#b42323"}
-function setLoginBusy(b){const a=$("login"),s=$("signup");a.disabled=b;s.disabled=b;a.textContent=b?"กำลังเข้าสู่ระบบ…":"เข้าสู่ระบบ"}
+function setLoginBusy(b){const a=$("login"),s=$("signup");if(!a||!s)return;a.disabled=b||!supabaseReady;s.disabled=b||!supabaseReady;a.textContent=b?"กำลังเข้าสู่ระบบ…":(supabaseReady?"เข้าสู่ระบบ":"กำลังเชื่อมต่อ…")}
 async function loadSupabase(){
   if(window.supabase?.createClient)return true;
-  const urls=["https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2","https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.js"];
+  // Try the official UMD browser build first.
+  const urls=[
+    "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js",
+    "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js",
+    "https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.js"
+  ];
   for(const src of urls){
-    try{await new Promise((resolve,reject)=>{const sc=document.createElement("script");sc.src=src;sc.onload=resolve;sc.onerror=reject;document.head.appendChild(sc)});if(window.supabase?.createClient)return true}catch(e){}
+    try{
+      await new Promise((resolve,reject)=>{
+        const sc=document.createElement("script");
+        sc.src=src; sc.async=true;
+        sc.onload=()=>resolve();
+        sc.onerror=()=>reject(new Error("โหลด Supabase ไม่สำเร็จ"));
+        document.head.appendChild(sc);
+      });
+      if(window.supabase?.createClient)return true;
+    }catch(e){}
   }
+  // Final fallback: browser ESM import.
+  try{
+    const mod=await import("https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm");
+    if(mod?.createClient){
+      window.supabase={createClient:mod.createClient};
+      return true;
+    }
+  }catch(e){}
   return false;
 }
 
@@ -80,13 +102,16 @@ async function init(){
 }
 $('login').onclick=async()=>{
   setAuthMsg("");
+  if(!db||!supabaseReady)return setAuthMsg("ระบบเชื่อมต่อยังไม่พร้อม กรุณารอ 2-3 วินาทีแล้วลองใหม่ หรือรีเฟรชหน้าเว็บ");
   const email=$('email').value.trim(),password=$('password').value;
   if(!email||!password)return setAuthMsg("กรุณากรอกอีเมลและรหัสผ่าน");
   setLoginBusy(true);
   try{const {error}=await db.auth.signInWithPassword({email,password});if(error)throw error;setAuthMsg("เข้าสู่ระบบสำเร็จ",true);await init()}catch(e){setAuthMsg(e?.message||"เข้าสู่ระบบไม่สำเร็จ")}finally{setLoginBusy(false)}
 };
 $('signup').onclick=async()=>{
-  setAuthMsg("");const email=$('email').value.trim(),password=$('password').value;
+  setAuthMsg("");
+  if(!db||!supabaseReady)return setAuthMsg("ระบบเชื่อมต่อยังไม่พร้อม กรุณารอ 2-3 วินาทีแล้วลองใหม่ หรือรีเฟรชหน้าเว็บ");
+  const email=$('email').value.trim(),password=$('password').value;
   if(!email||!password)return setAuthMsg("กรุณากรอกอีเมลและรหัสผ่าน");
   if(password.length<6)return setAuthMsg("รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร");
   setLoginBusy(true);
@@ -94,5 +119,24 @@ $('signup').onclick=async()=>{
 };
 $('logout').onclick=async()=>{await db.auth.signOut();location.reload()};$('logout2').onclick=async()=>{await db.auth.signOut();location.reload()};
 $('password').addEventListener('keydown',e=>{if(e.key==='Enter')$('login').click()});
-(async()=>{const ok=await loadSupabase();if(!ok){setAuthMsg("โหลดระบบเชื่อมต่อไม่ได้ กรุณาตรวจสอบอินเทอร์เน็ตหรือปิดตัวบล็อกสคริปต์ แล้วรีเฟรชหน้าเว็บ");return}db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);await init()})();
+(async()=>{
+  setLoginBusy(true);
+  setAuthMsg("กำลังเชื่อมต่อระบบ…");
+  const ok=await loadSupabase();
+  if(!ok){
+    setLoginBusy(false);
+    setAuthMsg("ไม่สามารถโหลด Supabase ได้ กรุณาตรวจสอบอินเทอร์เน็ต/ตัวบล็อกสคริปต์ แล้วรีเฟรชหน้าเว็บ");
+    return;
+  }
+  try{
+    db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+    supabaseReady=true;
+    setLoginBusy(false);
+    setAuthMsg("");
+    await init();
+  }catch(e){
+    setLoginBusy(false);
+    setAuthMsg("เริ่มระบบเชื่อมต่อไม่ได้: "+(e?.message||e));
+  }
+})();
 </script></body></html>
