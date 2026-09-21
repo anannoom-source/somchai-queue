@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#111827">
+<link rel="manifest" href="manifest.webmanifest">
+<title>ระบบจดคิวร้านสมชายหมูปิ้ง</title>
+<style>
+:root{--bg:#f5f7fb;--card:#fff;--ink:#111827;--muted:#64748b;--line:#e5e7eb;--primary:#111827;--green:#15803d;--orange:#ea580c;--red:#dc2626;--blue:#2563eb}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Tahoma,sans-serif}
+button,input,select,textarea{font:inherit}button{cursor:pointer}
+header{position:sticky;top:0;z-index:10;background:#111827;color:white;padding:14px 18px;display:flex;justify-content:space-between;align-items:center;gap:12px}
+.brand{font-weight:800;font-size:20px}.sub{font-size:12px;color:#cbd5e1}.wrap{max-width:1250px;margin:auto;padding:18px}
+.grid{display:grid;grid-template-columns:390px 1fr;gap:18px}.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px;box-shadow:0 4px 16px #00000008}
+h2,h3{margin:0 0 14px}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:18px}.stat{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px}.stat b{font-size:26px;display:block}.muted{color:var(--muted);font-size:13px}
+label{display:block;font-weight:700;font-size:13px;margin:12px 0 6px}input,select,textarea{width:100%;border:1px solid #cbd5e1;border-radius:10px;padding:11px;background:#fff}textarea{min-height:70px;resize:vertical}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}.btn{border:0;border-radius:10px;padding:11px 14px;font-weight:800}.primary{background:var(--primary);color:#fff}.green{background:#dcfce7;color:#166534}.blue{background:#dbeafe;color:#1d4ed8}.orange{background:#ffedd5;color:#9a3412}.red{background:#fee2e2;color:#991b1b}.ghost{background:#f1f5f9;color:#334155}
+.menuitem{display:grid;grid-template-columns:1fr 90px 80px;gap:8px;align-items:center;margin:8px 0}.qty{display:flex;gap:6px;align-items:center}.qty button{width:34px;height:34px;border:0;border-radius:8px;background:#e2e8f0;font-weight:900}.qty span{min-width:24px;text-align:center;font-weight:800}
+.order{border:1px solid var(--line);border-radius:14px;padding:14px;margin:10px 0;background:#fff}.ordertop{display:flex;justify-content:space-between;gap:10px;align-items:center}.qno{font-size:23px;font-weight:900}.chips{display:flex;gap:6px;flex-wrap:wrap}.chip{font-size:12px;border-radius:999px;padding:5px 9px;background:#f1f5f9}.actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}.items{font-size:13px;color:#475569;margin-top:7px}
+.tabs{display:flex;gap:8px;overflow:auto;margin-bottom:14px}.tab{white-space:nowrap}.hidden{display:none!important}
+.auth{min-height:100vh;display:grid;place-items:center;padding:20px}.auth .card{width:min(420px,100%)}.danger{color:#b91c1c}
+.toast{position:fixed;right:16px;bottom:16px;background:#111827;color:#fff;padding:12px 15px;border-radius:10px;display:none;z-index:99}
+@media(max-width:900px){.grid{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,1fr)}}@media(max-width:520px){.wrap{padding:10px}.row{grid-template-columns:1fr}.stats{gap:7px}.stat{padding:10px}.stat b{font-size:22px}}
+</style>
+</head>
+<body>
+<div id="authView" class="auth">
+  <div class="card">
+    <h2>🍢 สมชายหมูปิ้ง</h2>
+    <p class="muted">เข้าสู่ระบบเพื่อใช้งานระบบคิวออนไลน์</p>
+    <label>อีเมล</label><input id="email" type="email" autocomplete="email" placeholder="you@example.com">
+    <label>รหัสผ่าน</label><input id="password" type="password" autocomplete="current-password" placeholder="อย่างน้อย 6 ตัวอักษร">
+    <div class="actions"><button class="btn primary" id="loginBtn">เข้าสู่ระบบ</button><button class="btn ghost" id="signupBtn">สร้างบัญชี</button></div>
+    <p class="muted">บัญชีแรกใช้สำหรับเจ้าของร้าน/ผู้ดูแลระบบ</p>
+  </div>
+</div>
+
+<div id="appView" class="hidden">
+<header><div><div class="brand">🍢 ระบบจดคิวร้านสมชายหมูปิ้ง</div><div class="sub">Online • Supabase Realtime</div></div><button class="btn ghost" id="logoutBtn">ออกจากระบบ</button></header>
+<div class="wrap">
+  <div class="stats">
+    <div class="stat"><span class="muted">คิวรอ</span><b id="statWaiting">0</b></div>
+    <div class="stat"><span class="muted">กำลังทำ</span><b id="statMaking">0</b></div>
+    <div class="stat"><span class="muted">เสร็จแล้ววันนี้</span><b id="statDone">0</b></div>
+    <div class="stat"><span class="muted">ยอดขายวันนี้</span><b id="statSales">฿0</b></div>
+  </div>
+  <div class="tabs">
+    <button class="btn primary tab" data-tab="queue">➕ จดคิว</button>
+    <button class="btn ghost tab" data-tab="orders">📋 คิวทั้งหมด</button>
+    <button class="btn ghost tab" data-tab="history">📊 ประวัติ/ยอดขาย</button>
+    <button class="btn ghost tab" data-tab="menus">⚙️ เมนูและราคา</button>
+  </div>
+
+  <section id="tab-queue" class="grid">
+    <div class="card"><h2>เพิ่มคิวใหม่</h2>
+      <div class="row"><div><label>ชื่อลูกค้า</label><input id="customer" placeholder="เช่น คุณสมชาย"></div><div><label>ประเภท</label><select id="orderType"><option>หน้าร้าน</option><option>โทรสั่ง</option></select></div></div>
+      <label>รายการ</label><div id="menuBuilder"></div>
+      <label>การชำระเงิน</label><select id="payment"><option>ยังไม่จ่าย</option><option>จ่ายแล้ว</option></select>
+      <label>หมายเหตุ</label><textarea id="note" placeholder="เช่น ไม่ใส่เผ็ด / มารับ 18:00"></textarea>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin:14px 0"><span class="muted">ยอดรวม</span><strong style="font-size:25px" id="total">฿0</strong></div>
+      <button class="btn primary" style="width:100%" id="addOrder">เพิ่มเข้าคิว</button>
+    </div>
+    <div class="card"><h2>คิวที่กำลังรอ</h2><div id="waitingList"></div></div>
+  </section>
+
+  <section id="tab-orders" class="card hidden"><div style="display:flex;justify-content:space-between;gap:10px;align-items:center"><h2>คิววันนี้</h2><input id="search" style="max-width:260px" placeholder="ค้นหาคิว/ชื่อลูกค้า"></div><div id="ordersList"></div></section>
+
+  <section id="tab-history" class="card hidden"><h2>สรุปวันนี้</h2><div id="report"></div></section>
+
+  <section id="tab-menus" class="card hidden"><h2>จัดการเมนู</h2><p class="muted">แก้ราคาและเปิด/ปิดเมนูได้</p><div id="menuAdmin"></div><div class="row"><input id="newMenuName" placeholder="ชื่อเมนูใหม่"><input id="newMenuPrice" type="number" min="0" step="0.01" placeholder="ราคา"></div><button class="btn primary" style="margin-top:10px" id="addMenu">เพิ่มเมนู</button></section>
+</div>
+</div>
+<div id="toast" class="toast"></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPABASE_URL="https://bwlpuaaywyzmpidmclsb.supabase.co";
+const SUPABASE_PUBLISHABLE_KEY="sb_publishable_LdH8QTbu6TPKnaLRnroW5A_yHgwvfIw";
+const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);
+let menus=[], orders=[], user=null, selected={};
+
+const $=id=>document.getElementById(id);
+function money(n){return "฿"+Number(n||0).toLocaleString("th-TH",{minimumFractionDigits:0,maximumFractionDigits:2})}
+function toast(s){const t=$("toast");t.textContent=s;t.style.display="block";setTimeout(()=>t.style.display="none",2200)}
+function todayStart(){const d=new Date();d.setHours(0,0,0,0);return d.toISOString()}
+function esc(s){return String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]))}
+function statusChip(s){return `<span class="chip">${esc(s)}</span>`}
+
+async function loadAll(){
+  const [m,o]=await Promise.all([
+    db.from("menus").select("*").order("created_at"),
+    db.from("orders").select("*").gte("created_at",todayStart()).order("queue_no",{ascending:false})
+  ]);
+  if(m.error){toast("โหลดเมนูไม่สำเร็จ: "+m.error.message);return}
+  if(o.error){toast("โหลดคิวไม่สำเร็จ: "+o.error.message);return}
+  menus=m.data||[];orders=o.data||[];render();
+}
+function render(){
+  renderMenuBuilder();renderOrders();renderWaiting();renderAdmin();renderReport();stats();
+}
+function renderMenuBuilder(){
+  $("menuBuilder").innerHTML=menus.filter(x=>x.active).map(m=>{
+    const q=selected[m.id]||0;
+    return `<div class="menuitem"><div><b>${esc(m.name)}</b><div class="muted">${money(m.price)}</div></div>
+      <div class="qty"><button onclick="changeQty('${m.id}',-1)">−</button><span>${q}</span><button onclick="changeQty('${m.id}',1)">+</button></div>
+      <strong>${money(q*m.price)}</strong></div>`;
+  }).join("")||'<p class="muted">ยังไม่มีเมนูที่เปิดใช้งาน</p>';
+  const total=menus.reduce((s,m)=>s+(selected[m.id]||0)*Number(m.price),0);$("total").textContent=money(total);
+}
+window.changeQty=(id,d)=>{selected[id]=Math.max(0,(selected[id]||0)+d);renderMenuBuilder()}
+function itemPayload(){return menus.filter(m=>(selected[m.id]||0)>0).map(m=>({menu_id:m.id,name:m.name,price:Number(m.price),qty:selected[m.id],subtotal:Number(m.price)*selected[m.id]}))}
+async function addOrder(){
+  const items=itemPayload(); if(!items.length){toast("เลือกเมนูก่อนครับ");return}
+  const {data:last}=await db.from("orders").select("queue_no").gte("created_at",todayStart()).order("queue_no",{ascending:false}).limit(1);
+  const queueNo=(last&&last[0]?.queue_no||0)+1;
+  const total=items.reduce((s,x)=>s+x.subtotal,0);
+  const {error}=await db.from("orders").insert({queue_no:queueNo,customer_name:$("customer").value.trim()||null,note:$("note").value.trim()||null,order_type:$("orderType").value,payment_status:$("payment").value,status:"รอคิว",total_amount:total,items,created_by:user.id});
+  if(error){toast("เพิ่มคิวไม่สำเร็จ: "+error.message);return}
+  selected={};$("customer").value="";$("note").value="";$("payment").value="ยังไม่จ่าย";toast("เพิ่มคิว #"+queueNo+" แล้ว");await loadAll();
+}
+function orderCard(o){
+  const items=(o.items||[]).map(x=>`${esc(x.name)} × ${x.qty}`).join(" • ");
+  let acts="";
+  if(o.status==="รอคิว")acts+=`<button class="btn orange" onclick="setStatus('${o.id}','กำลังทำ')">▶ เริ่มทำ</button>`;
+  if(o.status==="กำลังทำ")acts+=`<button class="btn green" onclick="setStatus('${o.id}','เสร็จแล้ว')">✓ เสร็จแล้ว</button>`;
+  if(o.status!=="เสร็จแล้ว"&&o.status!=="ยกเลิก")acts+=`<button class="btn ghost" onclick="setPayment('${o.id}','${o.payment_status==="จ่ายแล้ว"?"ยังไม่จ่าย":"จ่ายแล้ว"}')">${o.payment_status==="จ่ายแล้ว"?"ยกเลิกจ่าย":"💵 รับเงิน"}</button>`;
+  if(o.status!=="ยกเลิก"&&o.status!=="เสร็จแล้ว")acts+=`<button class="btn red" onclick="setStatus('${o.id}','ยกเลิก')">ยกเลิก</button>`;
+  return `<div class="order"><div class="ordertop"><div><span class="qno">#${o.queue_no}</span> ${esc(o.customer_name||"ไม่ระบุชื่อ")}</div><strong>${money(o.total_amount)}</strong></div>
+  <div class="chips">${statusChip(o.status)}${statusChip(o.order_type)}${statusChip(o.payment_status)}</div>
+  <div class="items">${items||"-"}${o.note?`<br>📝 ${esc(o.note)}`:""}</div><div class="actions">${acts}</div></div>`;
+}
+function renderWaiting(){
+  const arr=orders.filter(o=>o.status==="รอคิว"||o.status==="กำลังทำ");
+  $("waitingList").innerHTML=arr.length?arr.map(orderCard).join(""):'<p class="muted">ไม่มีคิวรอ</p>';
+}
+function renderOrders(){
+  const q=($("search").value||"").toLowerCase();
+  const arr=orders.filter(o=>String(o.queue_no).includes(q)||String(o.customer_name||"").toLowerCase().includes(q));
+  $("ordersList").innerHTML=arr.length?arr.map(orderCard).join(""):'<p class="muted">ไม่พบรายการ</p>';
+}
+window.setStatus=async(id,status)=>{const {error}=await db.from("orders").update({status,updated_at:new Date().toISOString()}).eq("id",id);if(error)toast(error.message);else await loadAll()}
+window.setPayment=async(id,payment_status)=>{const {error}=await db.from("orders").update({payment_status,updated_at:new Date().toISOString()}).eq("id",id);if(error)toast(error.message);else await loadAll()}
+function stats(){
+ const w=orders.filter(o=>o.status==="รอคิว").length,m=orders.filter(o=>o.status==="กำลังทำ").length,d=orders.filter(o=>o.status==="เสร็จแล้ว").length,s=orders.filter(o=>o.status==="เสร็จแล้ว").reduce((a,o)=>a+Number(o.total_amount||0),0);
+ $("statWaiting").textContent=w;$("statMaking").textContent=m;$("statDone").textContent=d;$("statSales").textContent=money(s);
+}
+function renderReport(){
+ const done=orders.filter(o=>o.status==="เสร็จแล้ว"), sales=done.reduce((a,o)=>a+Number(o.total_amount||0),0);
+ const map={};done.forEach(o=>(o.items||[]).forEach(i=>{map[i.name]=(map[i.name]||0)+Number(i.qty)}));
+ $("report").innerHTML=`<div class="stats"><div class="stat"><span class="muted">ออเดอร์เสร็จ</span><b>${done.length}</b></div><div class="stat"><span class="muted">ยอดขาย</span><b>${money(sales)}</b></div><div class="stat"><span class="muted">ยังไม่จ่าย</span><b>${orders.filter(o=>o.payment_status==="ยังไม่จ่าย"&&o.status!=="ยกเลิก").length}</b></div><div class="stat"><span class="muted">ทั้งหมด</span><b>${orders.length}</b></div></div>
+ <h3>จำนวนขายแยกตามเมนู</h3>${Object.keys(map).length?Object.entries(map).map(([k,v])=>`<div style="display:flex;justify-content:space-between;border-bottom:1px solid var(--line);padding:10px 0"><span>${esc(k)}</span><b>${v}</b></div>`).join(""):'<p class="muted">ยังไม่มีออเดอร์ที่เสร็จ</p>'}`;
+}
+function renderAdmin(){
+ $("menuAdmin").innerHTML=menus.map(m=>`<div class="menuitem"><input value="${esc(m.name)}" id="mn-${m.id}"><input type="number" step="0.01" value="${m.price}" id="mp-${m.id}"><button class="btn ${m.active?"green":"ghost"}" onclick="toggleMenu('${m.id}',${!m.active})">${m.active?"เปิด":"ปิด"}</button><button class="btn primary" onclick="saveMenu('${m.id}')">บันทึก</button></div>`).join("");
+}
+window.saveMenu=async id=>{const name=$("mn-"+id).value.trim(),price=Number($("mp-"+id).value);if(!name||price<0)return;const {error}=await db.from("menus").update({name,price,updated_at:new Date().toISOString()}).eq("id",id);if(error)toast(error.message);else await loadAll()}
+window.toggleMenu=async(id,active)=>{const {error}=await db.from("menus").update({active,updated_at:new Date().toISOString()}).eq("id",id);if(error)toast(error.message);else await loadAll()}
+$("addMenu").onclick=async()=>{const name=$("newMenuName").value.trim(),price=Number($("newMenuPrice").value);if(!name||price<0){toast("กรอกชื่อและราคา");return}const {error}=await db.from("menus").insert({name,price,active:true});if(error)toast(error.message);else{$("newMenuName").value="";$("newMenuPrice").value="";await loadAll()}}
+$("addOrder").onclick=addOrder;$("search").oninput=renderOrders;
+document.querySelectorAll(".tab").forEach(b=>b.onclick=()=>{document.querySelectorAll(".tab").forEach(x=>x.classList.replace("primary","ghost"));b.classList.replace("ghost","primary");document.querySelectorAll("section[id^=tab-]").forEach(s=>s.classList.add("hidden"));$("tab-"+b.dataset.tab).classList.remove("hidden")});
+
+async function start(){
+ const {data}=await db.auth.getSession();user=data.session?.user||null;
+ if(user){$("authView").classList.add("hidden");$("appView").classList.remove("hidden");await loadAll();subscribe()}
+ else{$("authView").classList.remove("hidden");$("appView").classList.add("hidden")}
+}
+$("loginBtn").onclick=async()=>{const {error}=await db.auth.signInWithPassword({email:$("email").value.trim(),password:$("password").value});if(error)toast(error.message);else start()}
+$("signupBtn").onclick=async()=>{const {data,error}=await db.auth.signUp({email:$("email").value.trim(),password:$("password").value});if(error)toast(error.message);else toast(data.session?"สร้างบัญชีและเข้าใช้งานแล้ว":"สร้างบัญชีแล้ว กรุณาตรวจอีเมลยืนยันก่อนเข้าสู่ระบบ")}
+$("logoutBtn").onclick=async()=>{await db.auth.signOut();location.reload()}
+function subscribe(){
+ db.channel("somchai-live").on("postgres_changes",{event:"*",schema:"public",table:"orders"},()=>loadAll()).on("postgres_changes",{event:"*",schema:"public",table:"menus"},()=>loadAll()).subscribe();
+}
+start();
+</script>
+</body>
+</html>

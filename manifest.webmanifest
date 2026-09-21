@@ -1,0 +1,9 @@
+{
+  "name":"ระบบจดคิวร้านสมชายหมูปิ้ง",
+  "short_name":"สมชายคิว",
+  "start_url":"./",
+  "display":"standalone",
+  "background_color":"#f5f7fb",
+  "theme_color":"#111827",
+  "lang":"th"
+}
