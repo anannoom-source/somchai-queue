@@ -18,7 +18,7 @@
 </style>
 </head>
 <body>
-<div id="auth" class="auth"><div class="authCard"><div class="logo"><div class="logoMark">🍢</div><div><h1>สมชายหมูปิ้ง</h1><p>ระบบคิวออนไลน์สำหรับร้าน</p></div></div><label>อีเมล</label><input id="email" type="email" placeholder="you@example.com"><label>รหัสผ่าน</label><input id="password" type="password" placeholder="อย่างน้อย 6 ตัวอักษร"><div style="display:flex;gap:8px;margin-top:18px"><button class="btn primary" id="login" style="flex:1">เข้าสู่ระบบ</button><button class="btn soft" id="signup" style="flex:1">สร้างบัญชี</button></div><p style="color:var(--muted);font-size:12px;margin-top:15px">บัญชีแรกใช้สำหรับเจ้าของร้าน/ผู้ดูแลระบบ</p></div></div>
+<div id="auth" class="auth"><div class="authCard"><div class="logo"><div class="logoMark">🍢</div><div><h1>สมชายหมูปิ้ง</h1><p>ระบบคิวออนไลน์สำหรับร้าน</p></div></div><label>อีเมล</label><input id="email" type="email" placeholder="you@example.com"><label>รหัสผ่าน</label><input id="password" type="password" placeholder="อย่างน้อย 6 ตัวอักษร"><div style="display:flex;gap:8px;margin-top:18px"><button type="button" class="btn primary" id="login" style="flex:1">เข้าสู่ระบบ</button><button type="button" class="btn soft" id="signup" style="flex:1">สร้างบัญชี</button></div><div id="authMsg" style="display:none;margin-top:12px;padding:10px 12px;border-radius:10px;font-size:13px;line-height:1.45"></div><p style="color:var(--muted);font-size:12px;margin-top:15px">บัญชีแรกใช้สำหรับเจ้าของร้าน/ผู้ดูแลระบบ</p></div></div>
 <div id="app" class="app hidden"><header class="topbar"><div class="topBrand"><div class="mini">🍢</div><div><strong>สมชายหมูปิ้ง</strong><small>ระบบจัดการคิวและยอดขาย</small></div></div><div style="display:flex;align-items:center;gap:10px"><span class="statusOnline"><span class="dot"></span>ออนไลน์</span><button class="btn soft" id="logout">ออกจากระบบ</button></div></header><div class="layout">
 <aside class="side"><div class="shop"><strong>สมชายหมูปิ้ง</strong><small>เจ้าเก่าอยุธยา</small></div><nav class="nav"><button data-page="home" class="active">⌂ หน้าหลัก</button><button data-page="new">＋ จดคิวใหม่</button><button data-page="orders">▤ คิวทั้งหมด</button><button data-page="menus">▦ เมนูและราคา</button><button data-page="report">▥ ประวัติการขาย</button></nav><div class="sideFoot"><button class="btn" id="logout2">↪ ออกจากระบบ</button></div></aside>
 <main class="main">
@@ -28,8 +28,21 @@
 <section id="page-menus" class="section"><div class="pageHead"><div><h2>เมนูและราคา</h2><p>จัดการรายการอาหารและราคาได้จากหน้านี้</p></div></div><div class="grid2"><div class="card"><div id="menuAdmin"></div></div><div class="card"><h3>เพิ่มเมนูใหม่</h3><div class="field" style="margin-top:14px"><label>ชื่อเมนู</label><input id="newName" class="input" placeholder="เช่น หมูปิ้งชุดใหญ่"></div><div class="field" style="margin-top:12px"><label>ราคา</label><input id="newPrice" type="number" class="input" placeholder="0"></div><button class="btn primary full" style="margin-top:14px" id="addMenu">เพิ่มเมนู</button></div></div></section>
 <section id="page-report" class="section"><div class="pageHead"><div><h2>ประวัติการขาย</h2><p>สรุปยอดขายของวันนี้</p></div></div><div class="card" id="report"></div></section>
 </main></div><nav class="mobileNav"><button data-page="home" class="active">⌂<br>หน้าหลัก</button><button data-page="new">＋<br>จดคิว</button><button data-page="orders">▤<br>คิวทั้งหมด</button><button data-page="menus">▦<br>เมนู</button></nav></div><div id="toast" style="position:fixed;right:16px;bottom:18px;background:#172033;color:#fff;padding:12px 15px;border-radius:12px;display:none;z-index:100"></div>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script>
-const URL="https://bwlpuaaywyzmpidmclsb.supabase.co",KEY="sb_publishable_LdH8QTbu6TPKnaLRnroW5A_yHgwvfIw",db=supabase.createClient(URL,KEY);let user=null,menus=[],orders=[],sel={};
+<script>
+const SUPABASE_URL="https://bwlpuaaywyzmpidmclsb.supabase.co";
+const SUPABASE_KEY="sb_publishable_LdH8QTbu6TPKnaLRnroW5A_yHgwvfIw";
+let db=null,user=null,menus=[],orders=[],sel={};
+function setAuthMsg(msg,ok=false){const el=$("authMsg");if(!el)return;el.textContent=msg;el.style.display=msg?"block":"none";el.style.background=ok?"#e8f9f0":"#fff0f0";el.style.color=ok?"#087b45":"#b42323"}
+function setLoginBusy(b){const a=$("login"),s=$("signup");a.disabled=b;s.disabled=b;a.textContent=b?"กำลังเข้าสู่ระบบ…":"เข้าสู่ระบบ"}
+async function loadSupabase(){
+  if(window.supabase?.createClient)return true;
+  const urls=["https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2","https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.js"];
+  for(const src of urls){
+    try{await new Promise((resolve,reject)=>{const sc=document.createElement("script");sc.src=src;sc.onload=resolve;sc.onerror=reject;document.head.appendChild(sc)});if(window.supabase?.createClient)return true}catch(e){}
+  }
+  return false;
+}
+
 const $=x=>document.getElementById(x),money=n=>'฿'+Number(n||0).toLocaleString('th-TH',{maximumFractionDigits:2}),esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));function startDay(){let d=new Date();d.setHours(0,0,0,0);return d.toISOString()}function toast(s){let t=$('toast');t.textContent=s;t.style.display='block';setTimeout(()=>t.style.display='none',2200)}
 function go(p){document.querySelectorAll('.section').forEach(x=>x.classList.remove('active'));$('page-'+p).classList.add('active');document.querySelectorAll('[data-page]').forEach(x=>x.classList.toggle('active',x.dataset.page===p));if(p==='home')renderHome();if(p==='orders')renderOrders();if(p==='new')renderNew();if(p==='menus')renderMenus();if(p==='report')renderReport()}
 document.querySelectorAll('[data-page]').forEach(b=>b.onclick=()=>go(b.dataset.page));
@@ -48,6 +61,30 @@ function renderMenus(){$('menuAdmin').innerHTML=menus.map(m=>`<div class="menuRo
 window.saveMenu=async id=>{let {error}=await db.from('menus').update({name:$('n-'+id).value.trim(),price:Number($('p-'+id).value),updated_at:new Date().toISOString()}).eq('id',id);if(error)toast(error.message);else load()};window.toggleMenu=async(id,a)=>{let {error}=await db.from('menus').update({active:a,updated_at:new Date().toISOString()}).eq('id',id);if(error)toast(error.message);else load()};$('addMenu').onclick=async()=>{let n=$('newName').value.trim(),p=Number($('newPrice').value);if(!n||p<0)return toast('กรอกชื่อและราคา');let {error}=await db.from('menus').insert({name:n,price:p,active:true});if(error)toast(error.message);else{$('newName').value='';$('newPrice').value='';load()}}
 function renderReport(){let done=orders.filter(o=>o.status==='เสร็จแล้ว'),sales=done.reduce((a,o)=>a+Number(o.total_amount),0),unpaid=orders.filter(o=>o.payment_status==='ยังไม่จ่าย'&&o.status!=='ยกเลิก').reduce((a,o)=>a+Number(o.total_amount),0),map={};done.forEach(o=>(o.items||[]).forEach(i=>map[i.name]=(map[i.name]||0)+Number(i.qty)));$('report').innerHTML=`<div class="reportCards"><div class="reportItem"><span>ยอดขาย</span><b>${money(sales)}</b></div><div class="reportItem"><span>ออเดอร์เสร็จ</span><b>${done.length}</b></div><div class="reportItem"><span>ยอดค้างชำระ</span><b>${money(unpaid)}</b></div></div><h3 style="margin:24px 0 10px">ยอดขายแยกเมนู</h3>${Object.entries(map).map(([k,v])=>`<div class="reportItem" style="margin:7px 0"><span>${esc(k)}</span><b>${v}</b></div>`).join('')||'<p style="color:var(--muted)">ยังไม่มีข้อมูล</p>'}`}
 $('search').oninput=renderOrders;$('filter').onchange=renderOrders;$('searchHome').oninput=renderHome;$('filterHome').onchange=renderHome;
-async function init(){let {data}=await db.auth.getSession();user=data.session?.user||null;if(user){$('auth').classList.add('hidden');$('app').classList.remove('hidden');await load();db.channel('somchai-ui-live').on('postgres_changes',{event:'*',schema:'public',table:'orders'},load).on('postgres_changes',{event:'*',schema:'public',table:'menus'},load).subscribe()}else{$('auth').classList.remove('hidden');$('app').classList.add('hidden')}}
-$('login').onclick=async()=>{let {error}=await db.auth.signInWithPassword({email:$('email').value.trim(),password:$('password').value});if(error)toast(error.message);else init()};$('signup').onclick=async()=>{let {data,error}=await db.auth.signUp({email:$('email').value.trim(),password:$('password').value});if(error)toast(error.message);else toast(data.session?'สร้างบัญชีแล้ว':'สร้างบัญชีแล้ว กรุณายืนยันอีเมล')};$('logout').onclick=async()=>{await db.auth.signOut();location.reload()};$('logout2').onclick=async()=>{await db.auth.signOut();location.reload()};init();
+async function init(){
+  try{
+    if(!db) throw new Error("ระบบเชื่อมต่อ Supabase ยังไม่พร้อม กรุณารีเฟรชหน้าเว็บ");
+    const {data,error}=await db.auth.getSession();
+    if(error) throw error;
+    user=data.session?.user||null;
+    if(user){$('auth').classList.add('hidden');$('app').classList.remove('hidden');await load();db.channel('somchai-ui-live').on('postgres_changes',{event:'*',schema:'public',table:'orders'},load).on('postgres_changes',{event:'*',schema:'public',table:'menus'},load).subscribe()}else{$('auth').classList.remove('hidden');$('app').classList.add('hidden')}
+  }catch(e){setAuthMsg(e?.message||String(e))}
+}
+$('login').onclick=async()=>{
+  setAuthMsg("");
+  const email=$('email').value.trim(),password=$('password').value;
+  if(!email||!password)return setAuthMsg("กรุณากรอกอีเมลและรหัสผ่าน");
+  setLoginBusy(true);
+  try{const {error}=await db.auth.signInWithPassword({email,password});if(error)throw error;setAuthMsg("เข้าสู่ระบบสำเร็จ",true);await init()}catch(e){setAuthMsg(e?.message||"เข้าสู่ระบบไม่สำเร็จ")}finally{setLoginBusy(false)}
+};
+$('signup').onclick=async()=>{
+  setAuthMsg("");const email=$('email').value.trim(),password=$('password').value;
+  if(!email||!password)return setAuthMsg("กรุณากรอกอีเมลและรหัสผ่าน");
+  if(password.length<6)return setAuthMsg("รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร");
+  setLoginBusy(true);
+  try{const {data,error}=await db.auth.signUp({email,password});if(error)throw error;setAuthMsg(data.session?"สร้างบัญชีสำเร็จ":"สร้างบัญชีแล้ว กรุณายืนยันอีเมลก่อนเข้าสู่ระบบ",true)}catch(e){setAuthMsg(e?.message||"สร้างบัญชีไม่สำเร็จ")}finally{setLoginBusy(false)}
+};
+$('logout').onclick=async()=>{await db.auth.signOut();location.reload()};$('logout2').onclick=async()=>{await db.auth.signOut();location.reload()};
+$('password').addEventListener('keydown',e=>{if(e.key==='Enter')$('login').click()});
+(async()=>{const ok=await loadSupabase();if(!ok){setAuthMsg("โหลดระบบเชื่อมต่อไม่ได้ กรุณาตรวจสอบอินเทอร์เน็ตหรือปิดตัวบล็อกสคริปต์ แล้วรีเฟรชหน้าเว็บ");return}db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);await init()})();
 </script></body></html>
